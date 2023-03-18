@@ -19,20 +19,20 @@ defmodule DictionaryTest do
       |> length() == 4
   end
 
-  test "Dictionary.randomWord() is a string" do
-    assert is_binary(Dictionary.randomWord())
+  test "Dictionary.random_word() is a string" do
+    assert is_binary(Dictionary.random_word())
   end
 
-  test "Dictionary.randomWord() is not empty" do
-    assert Dictionary.randomWord() != ""
+  test "Dictionary.random_word() is not empty" do
+    assert Dictionary.random_word() != ""
   end
 
-  test "Dictionary.randomWord() is not nil" do
-    assert Dictionary.randomWord() != nil
+  test "Dictionary.random_word() is not nil" do
+    assert Dictionary.random_word() != nil
   end
 
-  test "Dictionary.randomWord() return two different words" do
-    assert Dictionary.randomWord() != Dictionary.randomWord()
+  test "Dictionary.random_word() return two different words" do
+    assert Dictionary.random_word() != Dictionary.random_word()
   end
 
 end
