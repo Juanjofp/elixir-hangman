@@ -1,18 +1,16 @@
 defmodule Dictionary do
 
-  # Hello World
+  @word_list "assets/words.txt"
+  |> File.read!()
+  |> String.split(~r/\n/, trim: true)
 
-  def hello() do
-    IO.puts "Hello World!!!"
+  def random_word() do
+    @word_list
+    |> Enum.random()
   end
 
-  def bye() do
-    IO.puts "Bye World!!!"
-  end
-
-  def run() do
-    hello()
-    bye()
-  end
+  def fib(0) do 0 end
+  def fib(1) do 1 end
+  def fib(n) do fib(n-1) + fib(n-2) end
 
 end
