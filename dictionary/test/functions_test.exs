@@ -7,6 +7,8 @@ defmodule FunctionTest do
 
     short_sum = &(&1 + &2)
 
+    # Anonymous functions are called with a dot
+
     assert sum.({1, 2}) == 3
 
     assert short_sum.(1, 2) == 3
