@@ -9,7 +9,7 @@ defmodule RandomTest do
   test "Integers and floats" do
     assert 1 == 1.0
 
-    assert 1_000_000 == 1000000
+    assert 1_000_000 == 1_000_000
 
     assert 0x1F == 31
 
@@ -52,7 +52,6 @@ defmodule RandomTest do
     assert String.to_float("1.0") == 1.0
 
     assert String.length("Hello") == 5
-
   end
 
   test "Atoms" do
@@ -82,7 +81,6 @@ defmodule RandomTest do
   end
 
   test "Booleans and bits operators" do
-
     import Bitwise
 
     assert true and true == true
@@ -129,7 +127,7 @@ defmodule RandomTest do
 
     assert 5 in r2 == false
 
-    assert for i <- r1, do: i*2 == [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+    assert for i <- r1, do: i * 2 == [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
   end
 
   test "Regular expression" do
@@ -148,7 +146,6 @@ defmodule RandomTest do
     res = "cats like catnip" |> String.replace(~r/cat/, "dog", global: false)
 
     assert res == "dogs like catnip" == true
-
   end
 
   test "Maps" do
@@ -179,7 +176,5 @@ defmodule RandomTest do
     assert Map.has_key?(m, :city) == false
 
     assert Map.has_key?(m, :age) == true
-
   end
-
 end

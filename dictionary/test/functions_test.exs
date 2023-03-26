@@ -3,7 +3,7 @@ defmodule FunctionTest do
   doctest Dictionary
 
   test "Anonymous Function parameters" do
-    sum = fn ({a, b}) -> a + b end
+    sum = fn {a, b} -> a + b end
 
     short_sum = &(&1 + &2)
 
@@ -16,24 +16,19 @@ defmodule FunctionTest do
 
   test "Named functions" do
     defmodule NamedFn do
-
       def one_line(a, b), do: a + b
 
       def named_fn(a, b) do
         a + b
       end
-
     end
 
     assert NamedFn.one_line(1, 2) == 3
 
-
     assert NamedFn.named_fn(1, 2) == 3
-
   end
 
   test "Pattern matching functions" do
-
     # Pattern matching functions works like a switch case
     # The first function that matches the pattern is executed
     # If no function matches the pattern, an error is raised
@@ -44,20 +39,16 @@ defmodule FunctionTest do
     # and so on
 
     defmodule Length do
-
       def of([]), do: 0
 
       def of([_ | tail]), do: 1 + of(tail)
-
     end
 
     assert Length.of([1, 2, 3]) == 3
-
   end
 
   test "Function parameters" do
     defmodule Params do
-
       def upla_fn(u = {a, b}) do
         {b, a, is_tuple(u)}
       end
@@ -69,7 +60,6 @@ defmodule FunctionTest do
 
       def same(a, a), do: true
       def same(_, _), do: false
-
     end
 
     assert Params.upla_fn({1, 2}) == {2, 1, true}
@@ -82,5 +72,4 @@ defmodule FunctionTest do
     assert Params.same(1, 1) == true
     assert Params.same(1, 2) == false
   end
-
 end

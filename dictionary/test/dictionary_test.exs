@@ -8,15 +8,15 @@ defmodule DictionaryTest do
 
   test "Anagram of juanjo is jaunjo" do
     assert "juanjo"
-      |> String.split("")
-      |> Enum.sort()
-      |> Enum.join() == "ajjnou"
+           |> String.split("")
+           |> Enum.sort()
+           |> Enum.join() == "ajjnou"
   end
 
   test "Length of word is 3" do
     assert "word"
-      |> String.split("", trim: true)
-      |> length() == 4
+           |> String.split("", trim: true)
+           |> length() == 4
   end
 
   test "Dictionary.random_word() is a string" do
@@ -34,5 +34,4 @@ defmodule DictionaryTest do
   test "Dictionary.random_word() return two different words" do
     assert Dictionary.random_word() != Dictionary.random_word()
   end
-
 end
