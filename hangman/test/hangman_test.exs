@@ -36,7 +36,7 @@ defmodule HangmanTest do
     assert game == %Hangman.Impl.Game{
       letters: ["h", "o", "l", "a"],
       turns_left: 7,
-      used: MapSet.new([])
+      used: []
     }
   end
 
@@ -51,7 +51,7 @@ defmodule HangmanTest do
 
     assert game.letters == ["h", "o", "l", "a"]
 
-    assert game.used == MapSet.new([])
+    assert game.used == []
   end
 
   test "Init game should return adios" do
@@ -118,10 +118,10 @@ defmodule HangmanTest do
     game = Hangman.init_game("hola")
 
     {game, _tally} = Hangman.make_move(game, "x")
-    {game, _tally} = Hangman.make_move(game, "y")
     {game, _tally} = Hangman.make_move(game, "z")
+    {game, _tally} = Hangman.make_move(game, "y")
 
-    assert MapSet.equal?(game.used, MapSet.new(["x", "y", "z"]))
+    assert game.used == ["x", "y", "z"]
 
   end
 end
