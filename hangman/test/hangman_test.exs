@@ -22,10 +22,106 @@ defmodule HangmanTest do
     assert length(game.letters) > 3
   end
 
-  test "New game impl should return a game struct" do
+  test "New game impl should return a letter list" do
     game = Hangman.new_game("hola")
 
     assert game.letters == ["h", "o", "l", "a"]
   end
 
+  test "New game should return an struct" do
+    game = Hangman.new_game("hola")
+
+    assert is_struct(game)
+
+    assert game == %Hangman.Impl.Game{
+      letters: ["h", "o", "l", "a"],
+      turns_left: 7,
+      used: MapSet.new([])
+    }
+  end
+
+  test "Init game should return an struct" do
+    game = Hangman.init_game("hola")
+
+    assert is_struct(game)
+
+    assert game.turns_left == 7
+
+    assert game.game_state == :initializing
+
+    assert game.letters == ["h", "o", "l", "a"]
+
+    assert game.used == MapSet.new([])
+  end
+
+  test "Init game should return adios" do
+    game = Hangman.init_game("adios")
+
+    [a, d, i | os] = game.letters
+
+    assert a == "a"
+    assert d == "d"
+    assert i == "i"
+    assert ["o", "s"] == os
+  end
+
+  test "State doesn't change if a game is won" do
+    game = Hangman.init_game("hola")
+
+    game = Map.put(game, :game_state, :won)
+
+    {new_game, _tally} = Hangman.make_move(game, "h")
+
+    assert new_game == game
+  end
+
+  test "State doesn't change if a game is lost" do
+    game = Hangman.init_game("hola")
+
+    game = Map.put(game, :game_state, :lost)
+
+    {new_game, _tally} = Hangman.make_move(game, "h")
+
+    assert new_game == game
+  end
+
+  test "State doesn't change if a game is won or lost" do
+
+    for state <- [:won, :lost] do
+
+      game = Hangman.init_game("hola")
+
+      game = Map.put(game, :game_state, state)
+
+      {new_game, _tally} = Hangman.make_move(game, "h")
+
+      assert new_game == game
+    end
+
+  end
+
+  test "A duplicated letter is reported" do
+    game = Hangman.init_game("hola")
+
+    {game, _tally} = Hangman.make_move(game, "x")
+    assert game.game_state != :already_used
+
+    {game, _tally} = Hangman.make_move(game, "y")
+    assert game.game_state != :already_used
+
+    {game, _tally} = Hangman.make_move(game, "x")
+    assert game.game_state == :already_used
+
+  end
+
+  test "Letters was stored" do
+    game = Hangman.init_game("hola")
+
+    {game, _tally} = Hangman.make_move(game, "x")
+    {game, _tally} = Hangman.make_move(game, "y")
+    {game, _tally} = Hangman.make_move(game, "z")
+
+    assert MapSet.equal?(game.used, MapSet.new(["x", "y", "z"]))
+
+  end
 end
