@@ -43,8 +43,22 @@ defmodule Hangman.Impl.Game do
   end
 
   def make_move(game, guess) do
-    accept_guess(game, guess, MapSet.member?(game.used, guess))
+    valid_guess(game, guess, valid_guess?(guess))
     |> return_with_tally()
+  end
+
+  ################## Valid guesst ######################
+
+  defp valid_guess?(guess) do
+    String.valid?(guess) and Regex.match?(~r/^[a-z]+$/, guess)
+  end
+
+  defp valid_guess(game, guess, _valid_guess = true) do
+    accept_guess(game, guess, MapSet.member?(game.used, guess))
+  end
+
+  defp valid_guess(game, _guess, _valid_guess) do
+    %{game | game_state: :invalid_guess}
   end
 
   ################## Accept a guesst ######################
@@ -75,10 +89,10 @@ defmodule Hangman.Impl.Game do
     %{game | game_state: :lost, turns_left: 0}
   end
 
-  defp score_guess(game, _bas_guess) do
+  defp score_guess(game = %{turns_left: turns_left}, _bas_guess) do
     # decrement turns_left, :bad_guess
 
-    %{game | game_state: :bad_guess, turns_left: game.turns_left - 1}
+    %{game | game_state: :bad_guess, turns_left: turns_left - 1}
   end
 
   ###################### maybe_one ######################

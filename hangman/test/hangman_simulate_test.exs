@@ -57,7 +57,7 @@ defmodule HangmanSimultateTest do
   def test_sequence_of_moves(script, word) do
     game = Hangman.new_game(word)
 
-    Enum.reduce(script, game, &check_one_move/2)
+    script |> Enum.reduce(game, &check_one_move/2)
   end
 
   ###################### Simulate moves ######################

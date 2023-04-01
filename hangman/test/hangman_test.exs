@@ -173,7 +173,7 @@ defmodule HangmanTest do
 
     assert tally.turns_left == 1
 
-    {game, tally} = Hangman.make_move(game, "c")
+    {_game, tally} = Hangman.make_move(game, "c")
 
     assert tally.game_state == :lost
 
@@ -206,7 +206,7 @@ defmodule HangmanTest do
 
     assert tally.turns_left == 4
 
-    {game, tally} = Hangman.make_move(game, "g")
+    {_game, tally} = Hangman.make_move(game, "g")
 
     assert tally.game_state == :won
 
@@ -234,12 +234,62 @@ defmodule HangmanTest do
     {game, _tally} = Hangman.make_move(game, "y")
     {game, _tally} = Hangman.make_move(game, "e")
 
-    {game, tally} = Hangman.make_move(game, "z")
+    {_game, tally} = Hangman.make_move(game, "z")
 
     assert tally.game_state == :lost
 
     assert tally.turns_left == 0
 
     assert tally.used == ["a", "e", "m", "t", "u", "v", "w", "x", "y", "z"]
+  end
+
+  test "Invalid guess" do
+    game = Hangman.new_game("whatever")
+
+    [1, '1', :one, %{}, "5", "H", {:ok}, []]
+    |> Enum.reduce(game, &check_move_is_invalid/2)
+  end
+
+  defp check_move_is_invalid(guess, game) do
+    {game, tally} = Hangman.make_move(game, guess)
+
+    assert tally.used === []
+    assert tally.game_state === :invalid_guess
+
+    game
+  end
+
+  test "List comprehension" do
+    moves = [
+      {"w", :good_guess},
+      {"i", :good_guess},
+      {"b", :good_guess},
+      # Should be :already_used but not!
+      {"b", :good_guess},
+      {"l", :good_guess},
+      # Should be :won but not!
+      {"e", :good_guess}
+    ]
+
+    game = Hangman.new_game("wibble")
+
+    # List comprehension do not update the game state
+    # It load the game state at the beginning of the comprehension
+    # and use it for each iteration
+    # so the game state is not updated and make_move return the same
+    # game state for each iteration because it is the same game state
+    # at the beginning of the comprehension
+
+    for {guess, state} <- moves do
+      {game, tally} = Hangman.make_move(game, guess)
+
+      # IO.puts("Data #{inspect(game.used)} is #{inspect(tally.used)}")
+
+      assert game.game_state == state
+    end
+
+    # In the case of our tests, we want to be able to
+    #  keep the game state up-to-date across calls to make_move.
+    # We can't do that by setting the state inside the comprehension.
   end
 end
