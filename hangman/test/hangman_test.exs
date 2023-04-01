@@ -34,10 +34,10 @@ defmodule HangmanTest do
     assert is_struct(game)
 
     assert game == %Hangman.Impl.Game{
-      letters: ["h", "o", "l", "a"],
-      turns_left: 7,
-      used: MapSet.new([])
-    }
+             letters: ["h", "o", "l", "a"],
+             turns_left: 7,
+             used: MapSet.new([])
+           }
   end
 
   test "Init game should return an struct" do
@@ -86,9 +86,7 @@ defmodule HangmanTest do
   end
 
   test "State doesn't change if a game is won or lost" do
-
     for state <- [:won, :lost] do
-
       game = Hangman.init_game("hola")
 
       game = Map.put(game, :game_state, state)
@@ -97,21 +95,22 @@ defmodule HangmanTest do
 
       assert new_game == game
     end
-
   end
 
   test "A duplicated letter is reported" do
     game = Hangman.init_game("hola")
 
     {game, _tally} = Hangman.make_move(game, "x")
+
     assert game.game_state != :already_used
 
     {game, _tally} = Hangman.make_move(game, "y")
+
     assert game.game_state != :already_used
 
     {game, _tally} = Hangman.make_move(game, "x")
-    assert game.game_state == :already_used
 
+    assert game.game_state == :already_used
   end
 
   test "Letters was stored" do
@@ -122,6 +121,125 @@ defmodule HangmanTest do
     {game, _tally} = Hangman.make_move(game, "z")
 
     assert MapSet.equal?(game.used, MapSet.new(["x", "y", "z"]))
+  end
 
+  test "Recognize letter 'e' and 'o' in hello" do
+    game = Hangman.new_game("hello")
+
+    {game, tally} = Hangman.make_move(game, "e")
+
+    assert tally.game_state == :good_guess
+
+    assert tally.used == ["e"]
+
+    {_game, tally} = Hangman.make_move(game, "o")
+
+    assert tally.game_state == :good_guess
+
+    assert tally.used == ["e", "o"]
+  end
+
+  test "Win a game" do
+    game = Hangman.new_game("one")
+
+    {game, _tally} = Hangman.make_move(game, "o")
+    {game, _tally} = Hangman.make_move(game, "e")
+    {_game, tally} = Hangman.make_move(game, "n")
+
+    assert tally.game_state == :won
+
+    assert tally.used == ["e", "n", "o"]
+
+    assert tally.letters == ["o", "n", "e"]
+  end
+
+  test "Lost a game" do
+    game = Hangman.init_game("looser")
+
+    {game, tally} = Hangman.make_move(game, "a")
+
+    assert tally.game_state == :bad_guess
+
+    assert tally.turns_left == 6
+
+    {game, _tally} = Hangman.make_move(game, "w")
+    {game, _tally} = Hangman.make_move(game, "x")
+    {game, _tally} = Hangman.make_move(game, "y")
+    {game, _tally} = Hangman.make_move(game, "z")
+
+    {game, tally} = Hangman.make_move(game, "b")
+
+    assert tally.game_state == :bad_guess
+
+    assert tally.turns_left == 1
+
+    {game, tally} = Hangman.make_move(game, "c")
+
+    assert tally.game_state == :lost
+
+    assert tally.turns_left == 0
+  end
+
+  test "Simulate win a game" do
+    game = Hangman.init_game("game")
+
+    {game, tally} = Hangman.make_move(game, "a")
+
+    assert tally.game_state == :good_guess
+
+    assert tally.turns_left == 7
+
+    {game, _tally} = Hangman.make_move(game, "w")
+    {game, _tally} = Hangman.make_move(game, "m")
+    {game, _tally} = Hangman.make_move(game, "y")
+    {game, _tally} = Hangman.make_move(game, "e")
+
+    {game, tally} = Hangman.make_move(game, "b")
+
+    assert tally.game_state == :bad_guess
+
+    assert tally.turns_left == 4
+
+    {game, tally} = Hangman.make_move(game, "m")
+
+    assert tally.game_state == :already_used
+
+    assert tally.turns_left == 4
+
+    {game, tally} = Hangman.make_move(game, "g")
+
+    assert tally.game_state == :won
+
+    assert tally.turns_left == 4
+
+    assert tally.used == ["a", "b", "e", "g", "m", "w", "y"]
+  end
+
+  test "Simulate loose a game" do
+    game = Hangman.init_game("game")
+
+    {game, tally} = Hangman.make_move(game, "a")
+
+    assert tally.game_state == :good_guess
+
+    assert tally.turns_left == 7
+
+    {game, _tally} = Hangman.make_move(game, "t")
+    {game, _tally} = Hangman.make_move(game, "u")
+    {game, _tally} = Hangman.make_move(game, "m")
+    {game, _tally} = Hangman.make_move(game, "v")
+    {game, _tally} = Hangman.make_move(game, "e")
+    {game, _tally} = Hangman.make_move(game, "w")
+    {game, _tally} = Hangman.make_move(game, "x")
+    {game, _tally} = Hangman.make_move(game, "y")
+    {game, _tally} = Hangman.make_move(game, "e")
+
+    {game, tally} = Hangman.make_move(game, "z")
+
+    assert tally.game_state == :lost
+
+    assert tally.turns_left == 0
+
+    assert tally.used == ["a", "e", "m", "t", "u", "v", "w", "x", "y", "z"]
   end
 end
