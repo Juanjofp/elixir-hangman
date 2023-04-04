@@ -281,7 +281,7 @@ defmodule HangmanTest do
     # at the beginning of the comprehension
 
     for {guess, state} <- moves do
-      {game, tally} = Hangman.make_move(game, guess)
+      {game, _tally} = Hangman.make_move(game, guess)
 
       # IO.puts("Data #{inspect(game.used)} is #{inspect(tally.used)}")
 
