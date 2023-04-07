@@ -292,4 +292,43 @@ defmodule HangmanTest do
     #  keep the game state up-to-date across calls to make_move.
     # We can't do that by setting the state inside the comprehension.
   end
+
+  test "Bottle song" do
+    defmodule BottleSong do
+      def bottle(_no_bottles = 0), do: "No green bottles"
+
+      def bottle(_one_bottle = 1), do: "1 green bottle"
+
+      def bottle(num_of_bottles), do: "#{num_of_bottles} green bottles"
+
+      def green_bottle(0), do: :ok
+
+      def green_bottle(num_of_bottles) do
+        IO.puts("""
+        #{bottle(num_of_bottles)} hanging on the wall,
+        #{bottle(num_of_bottles)} hanging on the wall,
+        And if one green bottle should accidentally fall,
+        There'll be #{bottle(num_of_bottles - 1)} hanging on the wall.
+        """)
+
+        green_bottle(num_of_bottles - 1)
+      end
+    end
+
+    BottleSong.green_bottle(10)
+  end
+
+  test "fibonacci" do
+    defmodule Fibo do
+      def fibo(0), do: 0
+      def fibo(1), do: 1
+      def fibo(n), do: fibo(n - 1) + fibo(n - 2)
+    end
+
+    assert Fibo.fibo(0) == 0
+    assert Fibo.fibo(1) == 1
+    assert Fibo.fibo(2) == 1
+    assert Fibo.fibo(5) == 5
+    assert Fibo.fibo(10) == 55
+  end
 end
